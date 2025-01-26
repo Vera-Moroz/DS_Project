@@ -22,16 +22,19 @@
 
 Проект состоит из следующих файлов и модулей:
 
-HW_3/
-    Data/ 
-    - ecommerce_data.csv
-    - personal_data.env 
-    - ecommerce.sql
-    Modules/
-    - db_utils.py
-    - get_data_from_db.py
-    - visualization.py
-- main.ipynb
+- Пункт первый
+    - Подпункт первый
+    - Подпункт второй
+2. Пункт второй
+
+- HW_3/
+    - Data/
+        ecommerce.sql
+    - Modules/
+        db_utils.py
+        get_data_from_db.py
+        visualization.py
+    main.ipynb
 
 ## Файлы с данными
 
@@ -52,11 +55,6 @@ HW_3/
 - `Churn`: Бинарное значение, указывающее, ушел ли клиент (0 - остался, 1 - ушел); целое число.
 
 Датасет взят с [Kaggle](https://www.kaggle.com/datasets/shriyashjagtap/e-commerce-customer-for-behavior-analysis) с предварительной ручной обработкой (удалена строка заголовков, столбец Returns из формата "1.0" приведен к целочисленному для корректной подгрузки в поле типа integer).
-
-### Дополнительные файлы
-
-- `personal_data.env`: Файл с переменными окружения для подключения к базе данных.
-- `ecommerce.sql`: SQL-скрипт для создания таблицы и загрузки данных.
 
 ## Модули и основные функции
 

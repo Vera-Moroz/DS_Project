@@ -30,6 +30,39 @@
     - visualization.py
 - main.ipynb
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Structure</title>
+    <style>
+        .folder {
+            font-weight: bold;
+        }
+        .file {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Структура проекта</h1>
+    <div class="folder">HW_3/</div>
+    <div class="file">
+        <div class="folder">Data/</div>
+        <div class="file">ecommerce_data.csv</div>
+    </div>
+    <div class="file">
+        <div class="folder">Modules/</div>
+        <div class="file">db_utils.py</div>
+        <div class="file">get_data_from_db.py</div>
+        <div class="file">visualization.py</div>
+    </div>
+    <div class="file">main.ipynb</div>
+</body>
+</html>
+
+
 ## Файлы с данными
 
 Данные для анализа хранятся в CSV-файле в подкаталоге `Data`. Файл содержит следующие поля:

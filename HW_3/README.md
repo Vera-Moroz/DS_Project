@@ -22,19 +22,14 @@
 
 Проект состоит из следующих файлов и модулей:
 
-- Пункт первый
-    - Подпункт первый
-    - Подпункт второй
-2. Пункт второй
-
 - HW_3/
-    - Data/
-        ecommerce.sql
-    - Modules/
-        db_utils.py
-        get_data_from_db.py
-        visualization.py
-    main.ipynb
+    1. Data/
+        - ecommerce.sql
+    2. Modules/
+        - db_utils.py
+        - get_data_from_db.py
+        - visualization.py
+    - main.ipynb
 
 ## Файлы с данными
 

@@ -24,26 +24,10 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Project Structure</title>
-    <style>
-        .folder {
-            font-weight: bold;
-        }
-        .file {
-            margin-left: 20px;
-        }
-        .line {
-            white-space: pre;
-        }
-    </style>
-</head>
 <body>
     <div class="line">HW_3/</div>
     <div class="line">├── Data/</div>
-    <div class="line">│   ├── ecommerce_data.csv</div>
+    <div class="line">│   └── ecommerce_data.csv</div>
     <div class="line">├── Modules/</div>
     <div class="line">│   ├── db_utils.py</div>
     <div class="line">│   ├── get_data_from_db.py</div>

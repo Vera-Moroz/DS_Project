@@ -22,14 +22,6 @@
 
 Проект состоит из следующих файлов и модулей:
 
-- Data/
-    - ecommerce_customer_data_custom_ratios.csv
-- Modules/
-    - db_utils.py
-    - get_data_from_db.py
-    - visualization.py
-- main.ipynb
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -43,22 +35,20 @@
         .file {
             margin-left: 20px;
         }
+        .line {
+            white-space: pre;
+        }
     </style>
 </head>
 <body>
-    <h1>Структура проекта</h1>
-    <div class="folder">HW_3/</div>
-    <div class="file">
-        <div class="folder">Data/</div>
-        <div class="file">ecommerce_data.csv</div>
-    </div>
-    <div class="file">
-        <div class="folder">Modules/</div>
-        <div class="file">db_utils.py</div>
-        <div class="file">get_data_from_db.py</div>
-        <div class="file">visualization.py</div>
-    </div>
-    <div class="file">main.ipynb</div>
+    <div class="line">HW_3/</div>
+    <div class="line">├── Data/</div>
+    <div class="line">│   ├── ecommerce_data.csv</div>
+    <div class="line">├── Modules/</div>
+    <div class="line">│   ├── db_utils.py</div>
+    <div class="line">│   ├── get_data_from_db.py</div>
+    <div class="line">│   └── visualization.py</div>
+    <div class="line">└── main.ipynb</div>
 </body>
 </html>
 

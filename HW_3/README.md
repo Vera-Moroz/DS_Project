@@ -22,19 +22,16 @@
 
 Проект состоит из следующих файлов и модулей:
 
-<!DOCTYPE html>
-<html lang="en">
-<body>
-    <div class="line">HW_3/</div>
-    <div class="line">├── Data/</div>
-    <div class="line">│   └── ecommerce_data.csv</div>
-    <div class="line">├── Modules/</div>
-    <div class="line">│   ├── db_utils.py</div>
-    <div class="line">│   ├── get_data_from_db.py</div>
-    <div class="line">│   └── visualization.py</div>
-    <div class="line">└── main.ipynb</div>
-</body>
-</html>
+<pre>
+HW_3/
+├── Data/
+│   └── ecommerce_data.csv
+├── Modules/
+│   ├── db_utils.py
+│   ├── get_data_from_db.py
+│   └── visualization.py
+└── main.ipynb
+</pre>
 
 
 ## Файлы с данными

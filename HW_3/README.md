@@ -23,7 +23,7 @@
 Проект состоит из следующих файлов и модулей:
 
 - Data/
-    - ecommerce.sql
+    - ecommerce_customer_data_custom_ratios.csv
 - Modules/
     - db_utils.py
     - get_data_from_db.py

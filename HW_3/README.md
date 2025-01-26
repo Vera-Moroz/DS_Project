@@ -22,10 +22,10 @@
 
 Проект состоит из следующих файлов и модулей:
 
-- HW_3/
-    1. Data/
+HW_3/
+    - Data/
         - ecommerce.sql
-    2. Modules/
+    - Modules/
         - db_utils.py
         - get_data_from_db.py
         - visualization.py

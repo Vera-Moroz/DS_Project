@@ -23,15 +23,15 @@
 Проект состоит из следующих файлов и модулей:
 
 HW_3/
-│ ├── Data/ 
-│ │ ├── ecommerce_data.csv
-│ │ ├── personal_data.env 
-│ │ └── ecommerce.sql
-│ └── Modules/
-│   ├── db_utils.py
-│   ├── get_data_from_db.py
-│   └── visualization.py
-└── main.ipynb
+    Data/ 
+    - ecommerce_data.csv
+    - personal_data.env 
+    - ecommerce.sql
+    Modules/
+    - db_utils.py
+    - get_data_from_db.py
+    - visualization.py
+- main.ipynb
 
 ## Файлы с данными
 

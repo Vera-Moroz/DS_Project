@@ -26,21 +26,32 @@ HW_6/
 ├── Data/
 │   └── online+retail.zip
 ├── Modules/
-│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/data_loader.py">data_loader.py</a>
-│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/eda.py">eda.py</a>
-│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/feature_engineering.py">feature_engineering.py</a>
-│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/modeling.py">modeling.py</a>
-│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/preprocessing.py">preprocessing.py</a>
-│   └── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/visualization.py">visualization.py</a>
-├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/requirements.txt">requirements.txt</a>
-├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/README.md">README.md</a>
-└── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/main.ipynb">main.ipynb</a>
+│   ├── <a href="#data_loaderpy">data_loader.py</a>
+│   ├── <a href="#edapy">eda.py</a>
+│   ├── <a href="#feature_engineeringpy">feature_engineering.py</a>
+│   ├── <a href="#modelingpy">modeling.py</a>
+│   ├── <a href="#preprocessingpy">preprocessing.py</a>
+│   └── <a href="#visualizationpy">visualization.py</a>
+├── <a href="#main.ipynb">main.ipynb</a>
+├── README.md
+└── <a href="#requirementstxt">requirements.txt</a>
 </pre>
 
+### `main.ipynb`
+[Открыть main.ipynb на GitHub](https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/main.ipynb)
+
+Файл Jupyter Notebook, содержащий основной код проекта. Включает в себя все этапы анализа данных, от предварительной обработки до моделирования. Запустите основной файл для выполнения проекта.
+
+### `requirements.txt`
+[Открыть requirements.txt на GitHub](https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/requirements.txt)
+
+Файл `requirements.txt` содержит список всех зависимостей и библиотек, необходимых для выполнения проекта. Убедитесь, что все библиотеки установлены, прежде чем запускать проект.
 
 ## Описание модулей
 
 ### `data_loader.py`
+<sup>[Открыть data_loader.py на GitHub](https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/data_loader.py)</sup>
+
 Модуль для загрузки данных из различных источников.
 
 - `load_data_from_site()`: Загрузка датасета 'Online Retail' из репозитория UCI и сохранение в файл. Возвращает DataFrame с данными.
@@ -57,6 +68,8 @@ HW_6/
 Эти файлы являются опциональными и создаются при выполнении модуля data_loader.py.
 
 ### `eda.py`
+<sup>[Открыть eda.py на GitHub](https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/eda.py)</sup>
+
 Модуль для выполнения анализа данных (EDA).
 
 - `perform_eda(df)`: Выполняет анализ данных (EDA) для переданного DataFrame. Включает вывод информации о полях и типах данных, первых строках данных, статистическом срезе данных, проверке пропущенных значений и дополнительном анализе.
@@ -66,6 +79,8 @@ HW_6/
 - `analyze_returns(df)`: Анализ доли возвратов в датасете, подсчет количества и суммы возвратов и продаж.
 
 ### `feature_engineering.py`
+<sup>[Открыть feature_engineering.py на GitHub](https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/feature_engineering.py)</sup>
+
 Модуль для создания новых признаков на основе исходных данных.
 
 - `calculate_amount(df)`: Расчитывает столбец 'Amount' как произведение 'Quantity' и 'UnitPrice'.
@@ -74,23 +89,19 @@ HW_6/
 - `create_date_features(df)`: Создает фичи на основе группировки по дате (без времени).
 - `normalize_features(df, columns)`: Нормализует указанные фичи в DataFrame.
 
-### `metrics.py`
-Модуль для оценки и диагностики моделей временного ряда.
-
-- `adf_test(series)`: Выполняет тест Дики-Фуллера (ADF) для проверки стационарности временного ряда. Возвращает p-value.
-- `ljung_box_test(residuals, lags=[10])`: Выполняет тест Льюнга-Бокса для проверки автокорреляции остатков модели. Возвращает результаты теста.
-- `calculate_metrics(actual, predicted)`: Вычисляет метрики модели: среднюю абсолютную ошибку (MAE), среднеквадратичную ошибку (MSE), корень из среднеквадратичной ошибки (RMSE) и средний абсолютный процент ошибки (MAPE). Возвращает значения метрик.
-
 ### `modeling.py`
+<sup>[Открыть modeling.py на GitHub](https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/modeling.py)</sup>
+
 Модуль для обучения и прогнозирования моделей временного ряда.
 
-- `arima_model(train_data, test_data)`: Обучает модель ARIMA на тренировочных данных и возвращает прогноз на тестовых данных.
-- `sarima_model(train_data, test_data)`: Обучает модель SARIMA на тренировочных данных и возвращает прогноз на тестовых данных.
-- `lstm_model(X_train, y_train, X_test, y_test, seq_length=30)`: Обучает LSTM модель на тренировочных данных и возвращает прогноз на тестовых данных.
-- `gru_model(X_train, y_train, X_test, y_test, seq_length=30)`: Обучает GRU модель на тренировочных данных и возвращает прогноз на тестовых данных.
-- `cnn_model(X_train, y_train, X_test, y_test, seq_length=30)`: Обучает CNN модель на тренировочных данных и возвращает прогноз на тестовых данных.
+- `arima_model(train_data, test_data, order)`: Обучает модель ARIMA на тренировочных данных с заданными параметрами `order` и возвращает прогноз на тестовых данных.
+- `auto_arima_model(train_data, test_data)`: Обучает модель ARIMA с автоматическим подбором параметров и возвращает прогноз на тестовых данных.
+- `sarima_model(train_data, test_data)`: Обучает модель SARIMA на тренировочных данных с автоматическим подбором параметров и возвращает прогноз на тестовых данных.
+- `lstm_model(train_data, test_data, seq_length, n_features)`: Обучает LSTM модель на тренировочных данных и возвращает прогноз на тестовых данных.
 
 ### `preprocessing.py`
+<sup>[Открыть preprocessing.py на GitHub](https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/preprocessing.py)</sup>
+
 Модуль для предобработки данных.
 
 - `preprocess_data(df)`: Предобработка данных: создание индикаторной переменной для пропусков в `CustomerID`, присвоение пропускам индекса 0 при энкодировании и добавление столбца `Amount`.
@@ -104,6 +115,7 @@ HW_6/
 - `create_sequences(data, seq_length)`: Создание последовательностей данных для обучения моделей временного ряда.
 
 ### `visualization.py`
+<sup>[Открыть visualization.py на GitHub](https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/visualization.py)</sup>
 Модуль для визуализации данных.
 
 - `plot_line_chart(data, x, y, title, xlabel, ylabel)`: Построение линейного графика для заданных данных.
@@ -111,9 +123,8 @@ HW_6/
 - `plot_heatmap(df_date_features, title, xlabel, ylabel)`: Построение тепловой карты на основе данных.
 - `correlation_matrix(df)`: Построение корреляционной матрицы для числовых данных.
 - `visualize_time_series(ts, title='Временной ряд')`: Визуализация временного ряда.
-- `visualize_residuals(residuals, title='Остатки модели')`: Визуализация остатков модели.
-- `visualize_forecast(train_data, test_data, forecast, title='Прогноз временного ряда')`: Визуализация обучающих данных, тестовых данных и прогноза.
-- `visualize_residuals_test(residuals, title='Остатки на тестовой выборке')`: Визуализация остатков на тестовой выборке.
+- `visualize_predictions(train_data, fitted_values, test_data, forecast, model_name, best_model=None)`: Визуализация обучающих данных, тестовых данных и предсказаний.
+
 
 ## Задачи
 1. Взять набор данных исходя из ваших интересов.

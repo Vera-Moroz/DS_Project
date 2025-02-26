@@ -193,3 +193,48 @@ def create_sequences(data, seq_length):
         sequences.append(data[i:i+seq_length])
         targets.append(data[i+seq_length])
     return np.array(sequences), np.array(targets)
+
+def fill_missing_sales(df):
+    """
+    Заполняет пропущенные дни (например, субботы) средним арифметическим продаж за неделю и обрабатывает NaN и бесконечные значения.
+    """
+    # Убедимся, что 'Date' имеет тип datetime
+    df['Date'] = pd.to_datetime(df['Date'])
+    
+    # Создаем полный набор дат от минимальной до максимальной даты
+    full_date_range = pd.date_range(start=df['Date'].min(), end=df['Date'].max(), freq='D')
+    
+    # Включаем полный набор дат в DataFrame
+    df_full = df.set_index('Date').reindex(full_date_range).reset_index().rename(columns={'index': 'Date'})
+    
+    # Найдем пропущенные значения
+    missing_values = df_full[df_full['TotalSalesAmount'].isna()].copy()
+
+    # Заполняем пропущенные значения средним арифметическим продаж за неделю
+    df_full['TotalSalesAmount'] = df_full.groupby(df_full['Date'].dt.isocalendar().week)['TotalSalesAmount'].transform(lambda x: x.fillna(x.mean()))
+
+    # Создаем DataFrame для хранения замененных значений пропущенных дней
+    replaced_missing = missing_values.copy()
+    replaced_missing['TotalSalesAmount_new'] = df_full.loc[missing_values.index, 'TotalSalesAmount']
+    
+    # Обработка NaN значений
+    replaced_nans = df_full[df_full['TotalSalesAmount'].isna()].copy()
+    df_full['TotalSalesAmount'] = df_full['TotalSalesAmount'].ffill().bfill()
+
+    # Создаем DataFrame для хранения замененных значений NaN
+    replaced_nans['TotalSalesAmount_new'] = df_full.loc[replaced_nans.index, 'TotalSalesAmount']
+
+    # Обработка бесконечных значений
+    df_full.replace([np.inf, -np.inf], np.nan, inplace=True)
+    replaced_infs = df_full[df_full['TotalSalesAmount'].isna()].copy()
+    df_full['TotalSalesAmount'] = df_full['TotalSalesAmount'].ffill().bfill()
+
+    # Создаем DataFrame для хранения замененных значений бесконечных значений
+    replaced_infs['TotalSalesAmount_new'] = df_full.loc[replaced_infs.index, 'TotalSalesAmount']
+    
+    # Вывод замененных значений
+    print("Пропущенные значения (по дням):\n", replaced_missing[['Date', 'TotalSalesAmount', 'TotalSalesAmount_new']])
+    print("Значения, замененные по причине NaN:\n", replaced_nans[['Date', 'TotalSalesAmount', 'TotalSalesAmount_new']])
+    print("Значения, замененные по причине бесконечных значений:\n", replaced_infs[['Date', 'TotalSalesAmount', 'TotalSalesAmount_new']])
+    
+    return df_full

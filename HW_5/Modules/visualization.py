@@ -125,45 +125,31 @@ def visualize_time_series(ts, title='Временной ряд'):
     plt.grid(True)
     plt.show()
 
-def visualize_residuals(residuals, title='Остатки модели'):
-    """
-    Визуализирует остатки модели.
-    """
-    plt.figure(figsize=(10, 6))
-    plt.plot(residuals, label='Остатки')
-    plt.title(title)
-    plt.axhline(0, linestyle='--', color='red', label='Нулевая линия')
-    plt.xlabel('Дата')
-    plt.ylabel('Остатки')
-    plt.legend()
-    plt.grid(True)
-    plt.show()
-
-def visualize_forecast(train_data, test_data, forecast, title='Прогноз временного ряда'):
-    """
-    Визуализирует обучающие данные, тестовые данные и прогноз.
-    """
+def visualize_predictions(train_data, fitted_values, test_data, forecast, model_name, best_model=None):
+    # Визуализация исходных данных и предсказанных значений с использованием модели
     plt.figure(figsize=(10, 6))
     plt.plot(train_data, label='Обучающие данные')
-    plt.plot(test_data.index, test_data, label='Тестовые данные')
-    plt.plot(test_data.index, forecast, color='green', label='Прогноз')
-    plt.title(title)
-    plt.xlabel('Дата')
-    plt.ylabel('Значение')
+    plt.plot(fitted_values, color='red', label='Предсказанные значения')
+    plt.title(f'{model_name}: сравнение обучающих данных и предсказанных значений')
     plt.legend()
-    plt.grid(True)
     plt.show()
 
-def visualize_residuals_test(residuals, title='Остатки на тестовой выборке'):
-    """
-    Визуализирует остатки на тестовой выборке.
-    """
+    # Визуализация прогноза на тестовой выборке
     plt.figure(figsize=(10, 6))
-    plt.plot(residuals, label='Остатки')
-    plt.title(title)
-    plt.axhline(0, linestyle='--', color='red', label='Нулевая линия')
-    plt.xlabel('Дата')
-    plt.ylabel('Остатки')
+    plt.plot(train_data, label='Обучающие данные')
+    plt.plot(test_data, label='Тестовые данные')
+    plt.plot(test_data.index, forecast, color='green', label='Прогноз')
+    plt.title(f'{model_name}: прогнозирование временного ряда')
+    plt.legend()
+    plt.show()
+
+    # Визуализация остатков
+    residuals = test_data - forecast
+
+    plt.figure(figsize=(10, 6))
+    plt.plot(residuals, label='Остатки', color='blue')
+    plt.axhline(0, linestyle='--', color='red')
+    plt.title('Остатки прогноза')
     plt.legend()
     plt.grid(True)
     plt.show()

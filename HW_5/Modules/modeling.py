@@ -1,32 +1,77 @@
 # modeling.py
 
+import warnings
 import pandas as pd
 import numpy as np
 from statsmodels.tsa.arima.model import ARIMA
-from statsmodels.tsa.statespace.sarimax import SARIMAX
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, GRU, Conv1D, MaxPooling1D, Flatten, Dense
-from tensorflow.keras.optimizers import Adam
-from statsmodels.tsa.stattools import adfuller
-from pmdarima import auto_arima
+from sklearn.metrics import mean_absolute_error, mean_squared_error
+from Modules.visualization import visualize_predictions 
 
-# ARIMA Model
-def arima_model(train_data, test_data):
-    # Проверка на стационарность
-    result = adfuller(train_data)
-    if result[1] > 0.05:
-        train_data = train_data.diff().dropna()
+# ARIMA Model with manual parameters
+def arima_model(train_data, test_data, order):
+    import warnings
+    import pandas as pd
+    import numpy as np
+    from statsmodels.tsa.arima.model import ARIMA
+    from sklearn.metrics import mean_absolute_error, mean_squared_error
+    from Modules.visualization import visualize_predictions  # Импортируем функцию визуализации
 
-    # Подбор параметров модели
-    model_auto = auto_arima(train_data, seasonal=False, stepwise=True, trace=True)
-    order = model_auto.order
-
+    # Отключение предупреждений
+    warnings.filterwarnings("ignore")
+    
     # Обучение модели
     model = ARIMA(train_data, order=order)
     model_fit = model.fit()
+    print(model_fit.summary())
+    
+    # Прогнозирование для тестовой выборки
     forecast = model_fit.forecast(steps=len(test_data))
+    forecast_index = pd.date_range(start=test_data.index[0], periods=len(test_data), freq='D')
+    forecast = pd.Series(forecast, index=forecast_index)
+    print(forecast)
+    
+    # Получение предсказанных значений на обучающей выборке
+    fitted_values = model_fit.predict(start=train_data.index[0], end=train_data.index[-1])
+    fitted_values = pd.Series(fitted_values, index=train_data.index)
 
-    return model_fit, forecast
+    # Визуализация данных и предсказаний
+    model_name = f'ARIMA ({order[0]}, {order[1]}, {order[2]})'
+    visualize_predictions(train_data, fitted_values, test_data['TotalSalesAmount'], forecast, model_name)
+    
+    # Метрики качества
+    mae = mean_absolute_error(test_data, forecast)
+    mse = mean_squared_error(test_data, forecast)
+    rmse = np.sqrt(mse)
+    mape = np.mean(np.abs((test_data - forecast) / test_data)) * 100
+
+    print(f'Mean Absolute Error (MAE): {mae:.3f}')
+    print(f'Mean Squared Error (MSE): {mse:.3f}')
+    print(f'Root Mean Squared Error (RMSE): {rmse:.3f}')
+    print(f'Mean Absolute Percentage Error (MAPE): {mape:.3f}%')
+    
+    
+    return model_fit, forecast, fitted_values
+
+
+
+# ARIMA Model with auto ARIMA
+def auto_arima_model(train_data, test_data):
+    # Автоматический подбор параметров (p, d, q)
+    model_auto = auto_arima(train_data, seasonal=False, stepwise=True, trace=True)
+    print(model_auto.summary())
+
+    # Сохранение лучших параметров модели
+    best_model = model_auto
+
+    # Прогнозирование для тестовой выборки
+    forecast_test = model_auto.predict(n_periods=len(test_data))
+    forecast_test = pd.Series(forecast_test, index=test_data.index)
+
+    # Получение предсказанных значений на обучающей выборке
+    fitted_values = model_auto.predict_in_sample()
+    fitted_values = pd.Series(fitted_values, index=train_data.index)
+    
+    return best_model, forecast_test, fitted_values
 
 # SARIMA Model
 def sarima_model(train_data, test_data):

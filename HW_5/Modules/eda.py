@@ -1,3 +1,5 @@
+# eda.py
+
 import pandas as pd
 
 def perform_eda(df):

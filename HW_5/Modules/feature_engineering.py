@@ -1,3 +1,5 @@
+# feature_engineering.py
+
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 
@@ -78,6 +80,18 @@ def create_date_features(df):
         WeekOfYear=('InvoiceDate', lambda x: x.dt.isocalendar().week.mode()[0]),  # Номер недели в году
         MonthOfYear=('InvoiceDate', lambda x: x.dt.month.mode()[0])  # Месяц года
     ).reset_index()
+    
+    # Описание для каждой новой фичи
+    print("Фичи, созданные на основе группировки по дате:")
+    print("1. 'Date': Дата (без времени).")
+    print("2. 'TotalSalesAmount': Общая сумма продаж за день.")
+    print("3. 'TotalSalesQuantity': Общее количество товаров, проданных за день.")
+    print("4. 'AverageSalesAmount': Средняя сумма продаж за день.")
+    print("5. 'AverageSalesQuantity': Среднее количество товаров, проданных за день.")
+    print("6. 'NumberOfTransactions': Количество транзакций за день.")
+    print("7. 'DayOfWeek': День недели (0 = понедельник, 1 = вторник и т.д.).")
+    print("8. 'WeekOfYear': Номер недели в году.")
+    print("9. 'MonthOfYear': Месяц года.")
 
     return date_features
 

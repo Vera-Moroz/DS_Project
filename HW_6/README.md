@@ -22,20 +22,19 @@
 Проект имеет следующую структуру:
 
 <pre>
-HW_5/
+HW_6/
 ├── Data/
 │   └── online+retail.zip
 ├── Modules/
-│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_5/Modules/data_loader.py">data_loader.py</a>
-│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_5/Modules/eda.py">eda.py</a>
-│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_5/Modules/feature_engineering.py">feature_engineering.py</a>
-│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_5/Modules/metrics.py">metrics.py</a>
-│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_5/Modules/modeling.py">modeling.py</a>
-│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_5/Modules/preprocessing.py">preprocessing.py</a>
-│   └── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_5/Modules/visualization.py">visualization.py</a>
-├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_5/requirements.txt">requirements.txt</a>
-├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_5/README.md">README.md</a>
-└── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_5/main.ipynb">main.ipynb</a>
+│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/data_loader.py">data_loader.py</a>
+│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/eda.py">eda.py</a>
+│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/feature_engineering.py">feature_engineering.py</a>
+│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/modeling.py">modeling.py</a>
+│   ├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/preprocessing.py">preprocessing.py</a>
+│   └── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/Modules/visualization.py">visualization.py</a>
+├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/requirements.txt">requirements.txt</a>
+├── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/README.md">README.md</a>
+└── <a href="https://github.com/Vera-Moroz/DS_Project/blob/main/HW_6/main.ipynb">main.ipynb</a>
 </pre>
 
 

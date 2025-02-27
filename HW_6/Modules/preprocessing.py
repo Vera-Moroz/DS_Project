@@ -3,9 +3,14 @@
 import numpy as np
 import pandas as pd
 import os
+import matplotlib.pyplot as plt
+from statsmodels.tsa.stattools import adfuller
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from sklearn.preprocessing import MinMaxScaler, LabelEncoder
 from sklearn.feature_extraction import FeatureHasher
 from Modules.feature_engineering import calculate_amount
+from Modules.visualization import visualize_time_series
+
 
 def preprocess_data(df):
     """
@@ -186,12 +191,15 @@ def normalize_data(data):
     data_scaled = scaler.fit_transform(data.values.reshape(-1, 1))
     return scaler, data_scaled
 
+# Функция для создания последовательных данных для модели LSTM
 def create_sequences(data, seq_length):
     sequences = []
     targets = []
     for i in range(len(data) - seq_length):
-        sequences.append(data[i:i+seq_length])
-        targets.append(data[i+seq_length])
+        sequence = data[i:i+seq_length]
+        target = data[i+seq_length]
+        sequences.append(sequence)
+        targets.append(target)
     return np.array(sequences), np.array(targets)
 
 def fill_missing_sales(df):
@@ -238,3 +246,61 @@ def fill_missing_sales(df):
     print("Значения, замененные по причине бесконечных значений:\n", replaced_infs[['Date', 'TotalSalesAmount', 'TotalSalesAmount_new']])
     
     return df_full
+
+
+def preprocess_time_series(data, train_size=0.8):
+    """
+    Обрабатывает временной ряд, выполняет проверку на стационарность, дифференцирование и возвращает обучающие и тестовые выборки.
+
+    :param data: DataFrame с временными метками и значениями временного ряда.
+    :param train_size: доля данных для обучения модели (по умолчанию 0.8).
+    :return: train_data, test_data, indices
+    """
+    # Проверка на стационарность с помощью ADF теста
+    result = adfuller(data['TotalSalesAmount'])
+    print('ADF Statistic:', result[0])
+    print('p-value:', result[1])
+
+    if result[1] > 0.05:
+        print('\nВременной ряд не является стационарным. Применим дифференцирование')
+
+        # Дифференцирование данных для достижения стационарности
+        data_diff = data.diff().dropna()
+
+        # Повторный тест ADF
+        result_diff = adfuller(data_diff['TotalSalesAmount'])
+        print('ADF Statistic (после дифференцирования):', result_diff[0])
+        print('p-value (после дифференцирования):', result_diff[1])
+
+        print('\nРезультат ADF теста показывает, что после дифференцирования временной ряд стал стационарным')
+
+        # Визуализация дифференцированного временного ряда
+        visualize_time_series(data_diff, title='Дифференцированный временной ряд')
+
+        # Визуализация автокорреляции и частичной автокорреляции
+        plt.figure(figsize=(12, 6))
+        plt.subplot(211)
+        plot_acf(data_diff['TotalSalesAmount'], ax=plt.gca(), lags=40)
+        plt.subplot(212)
+        plot_pacf(data_diff['TotalSalesAmount'], ax=plt.gca(), lags=40)
+        plt.show()
+
+        # Находим минимальное значение даты
+        start_date = data.index.min()
+
+        # Создаем индексы для дифференцированного временного ряда
+        data_diff.index = pd.date_range(start=start_date, periods=len(data_diff), freq='D')
+
+        # Разделение данных на обучающую и тестовую выборки с учетом индексов
+        train_size = int(len(data_diff) * train_size)
+        train_data, test_data = data_diff[:train_size], data_diff[train_size:]
+
+        # Возвращаем данные вместе с индексами
+        return train_data, test_data, data_diff.index
+    else:
+        train_size = int(len(data) * train_size)
+        train_data, test_data = data[:train_size], data[train_size:]
+
+        # Возвращаем данные без изменения индексов
+        return train_data, test_data, data.index
+

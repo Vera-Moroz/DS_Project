@@ -24,9 +24,10 @@ def perform_eda(df):
 
     # Дополнительный анализ
     print("\n**Количество уникальных значений в столбцах:**\n")
-    print(f"Уникальных стран: {df['Country'].nunique()}")
-    print(f"Уникальных клиентов: {df['CustomerID'].nunique()}")
-    print(f"Уникальных описаний товаров: {df['Description'].nunique()}")
+    print(f"Уникальных стран: {df['Country'].nunique(dropna=False)}")
+    print(f"Уникальных клиентов: {df['CustomerID'].nunique(dropna=False)}")
+    print(f"Уникальных описаний товаров: {df['Description'].nunique(dropna=False)}")
+
 
     # Количество заказов и возвратов
     print("\n**Количество заказов и возвратов:**\n")

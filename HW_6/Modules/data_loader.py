@@ -7,7 +7,7 @@ import zipfile
 def load_data_from_site():
     """
     Загрузка датасета 'Online Retail' из репозитория UCI и сохранение в файл.
-    Возвращает DataFrame с features.
+    Возвращает DataFrame с данными.
     """
     base_path = os.path.dirname(__file__)
     features_path = os.path.join(base_path, '..', 'Data', 'online_retail_features.csv')
@@ -48,16 +48,16 @@ def load_data_from_zip():
         df = pd.read_csv(csv_path)
         print(f"Данные загружены из файла: {csv_path}")
     else:
+        # Проверка наличия Excel файла, если его нет, извлекаем из архива
         if not os.path.exists(excel_path):
             with zipfile.ZipFile(zip_path, 'r') as zip_ref:
                 zip_ref.extractall(data_dir)
-                print(f"""Данные извлечены zip-архива в каталог {data_dir}
-                        \nИдет чтение и загрузка xlsx-файла.""")
+                print(f"Данные извлечены из zip-архива в каталог {data_dir}.\nИдет чтение и загрузка xlsx-файла.")
         
         # Загрузка данных из файла Excel с использованием openpyxl
         df = pd.read_excel(excel_path, engine='openpyxl')
         
-        # Сохранение данных в CSV файл
+        # Сохранение данных в CSV файл для ускорения будущих загрузок
         df.to_csv(csv_path, index=False)
         print(f"Данные загружены из файла: {excel_path} и сохранены в файл: {csv_path} для ускорения будущих загрузок.")
     
@@ -69,14 +69,15 @@ def data_load():
     """
     data_source = input(f"""Откуда вы хотите загрузить данные?
     Предпочтительнее загрузка данных из архива, т.к. на сайте отсутствуют поля ['InvoiceNo', 'StockCode'].
-    Введите 'site' для загрузки с сайта или 'zip' для загрузки из архива:""")
+    Введите 'site' для загрузки с сайта или 'zip' для загрузки из архива: """)
 
     if data_source.lower() == 'site':
         df = load_data_from_site()
     elif data_source.lower() == 'zip':
         df = load_data_from_zip()
     else:
-        print("Ошибка: некорректный выбор источника данных. Применено значение по умолчанию zip")
+        # Если введено некорректное значение, по умолчанию загружаем из архива
+        print("Ошибка: некорректный выбор источника данных. Применено значение по умолчанию 'zip'.")
         df = load_data_from_zip()
 
     return df

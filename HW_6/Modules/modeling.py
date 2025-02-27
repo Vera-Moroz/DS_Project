@@ -1,6 +1,7 @@
 import warnings
 import pandas as pd
 import numpy as np
+import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 from statsmodels.tsa.arima.model import ARIMA
@@ -8,7 +9,7 @@ from pmdarima import auto_arima
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
-from tensorflow.keras import models, layers
+from tensorflow.keras.callbacks import EarlyStopping
 from Modules.preprocessing import normalize_data, create_sequences
 from Modules.visualization import visualize_predictions
 
@@ -114,6 +115,7 @@ def sarima_model(train_data, test_data):
 # LSTM Model
 def lstm_model(train_data, test_data, seq_length=12, epochs=100, batch_size=32):
     warnings.filterwarnings("ignore")
+    tf.get_logger().setLevel('ERROR')
 
     # Нормализация данных
     scaler, train_data_scaled = normalize_data(train_data.values.reshape(-1, 1), feature_range=(-1, 1))
@@ -126,12 +128,23 @@ def lstm_model(train_data, test_data, seq_length=12, epochs=100, batch_size=32):
     else:
         raise ValueError("Ошибка: Размер данных недостаточен для создания последовательностей с указанной длиной.")
 
+    # Разделение данных на обучающие и валидационные
+    split_index = int(len(LSTM_X_train) * 0.8)
+    LSTM_X_train, LSTM_X_val = LSTM_X_train[:split_index], LSTM_X_train[split_index:]
+    LSTM_y_train, LSTM_y_val = LSTM_y_train[:split_index], LSTM_y_train[split_index:]
+
     # Модель LSTM
     LSTM_model = Sequential()
     LSTM_model.add(LSTM(50, activation='relu', input_shape=(seq_length, 1)))
     LSTM_model.add(Dense(1))
     LSTM_model.compile(optimizer='adam', loss='mean_squared_error')
-    LSTM_model.fit(LSTM_X_train, LSTM_y_train, epochs=epochs, batch_size=batch_size)
+
+    # Раннее прекращение
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+
+    # Обучение модели с валидационными данными и ранним прекращением
+    LSTM_model.fit(LSTM_X_train, LSTM_y_train, epochs=epochs, batch_size=batch_size,
+                   validation_data=(LSTM_X_val, LSTM_y_val), callbacks=[early_stopping])
 
     # Прогнозирование на тестовых данных
     LSTM_forecast = LSTM_model.predict(LSTM_X_test)
@@ -160,9 +173,11 @@ def lstm_model(train_data, test_data, seq_length=12, epochs=100, batch_size=32):
 
     return LSTM_model, LSTM_forecast_inv_df, LSTM_y_test_inv_df, LSTM_y_train_inv_df, LSTM_mae, LSTM_mse, LSTM_rmse
 
+
 # CNN Model
 def cnn_model(train_data, test_data, seq_length=12, epochs=20):
     warnings.filterwarnings("ignore")
+    tf.get_logger().setLevel('ERROR')
 
     # Нормализация данных
     scaler, train_data_scaled = normalize_data(train_data.values.reshape(-1, 1), feature_range=(0, 1))
@@ -191,8 +206,11 @@ def cnn_model(train_data, test_data, seq_length=12, epochs=20):
     # Компиляция модели
     model.compile(optimizer='adam', loss='mean_squared_error')
 
-    # Обучение модели
-    history = model.fit(CNN_X_train, CNN_y_train, epochs=epochs, validation_data=(CNN_X_test, CNN_y_test))
+    # Раннее прекращение
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+
+    # Обучение модели с ранним прекращением
+    history = model.fit(CNN_X_train, CNN_y_train, epochs=epochs, validation_data=(CNN_X_test, CNN_y_test), callbacks=[early_stopping])
 
     # Прогнозирование на тестовых данных
     CNN_forecast = model.predict(CNN_X_test)
@@ -210,7 +228,6 @@ def cnn_model(train_data, test_data, seq_length=12, epochs=20):
     # Визуализация результатов прогноза
     visualize_predictions(train_data, CNN_y_train_inv_df, CNN_y_test_inv_df, CNN_forecast_inv_df, model_name="CNN")
 
-
     # Метрики качества
     CNN_mae = mean_absolute_error(CNN_y_test_inv, CNN_forecast_inv)
     CNN_mse = mean_squared_error(CNN_y_test_inv, CNN_forecast_inv)
@@ -222,3 +239,64 @@ def cnn_model(train_data, test_data, seq_length=12, epochs=20):
 
     return model, CNN_forecast_inv_df, CNN_y_test_inv_df, CNN_y_train_inv_df, CNN_mae, CNN_mse, CNN_rmse
 
+
+# GRU Model
+def gru_model(train_data, test_data, seq_length=12, epochs=100, batch_size=32):
+    warnings.filterwarnings("ignore")
+    tf.get_logger().setLevel('ERROR')
+
+    # Нормализация данных
+    scaler, train_data_scaled = normalize_data(train_data.values.reshape(-1, 1), feature_range=(-1, 1))
+    test_data_scaled = scaler.transform(test_data.values.reshape(-1, 1))
+
+    # Создание последовательных данных
+    if len(train_data_scaled) > seq_length and len(test_data_scaled) > seq_length:
+        GRU_X_train, GRU_y_train = create_sequences(train_data_scaled, seq_length)
+        GRU_X_test, GRU_y_test = create_sequences(test_data_scaled, seq_length)
+    else:
+        raise ValueError("Ошибка: Размер данных недостаточен для создания последовательностей с указанной длиной.")
+
+    # Разделение данных на обучающие и валидационные
+    split_index = int(len(GRU_X_train) * 0.8)
+    GRU_X_train, GRU_X_val = GRU_X_train[:split_index], GRU_X_train[split_index:]
+    GRU_y_train, GRU_y_val = GRU_y_train[:split_index], GRU_y_train[split_index:]
+
+    # Модель GRU
+    GRU_model = Sequential()
+    GRU_model.add(layers.GRU(50, activation='relu', input_shape=(seq_length, 1)))
+    GRU_model.add(Dense(1))
+    GRU_model.compile(optimizer='adam', loss='mean_squared_error')
+
+    # Раннее прекращение
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+
+    # Обучение модели с валидационными данными и ранним прекращением
+    GRU_model.fit(GRU_X_train, GRU_y_train, epochs=epochs, batch_size=batch_size,
+                  validation_data=(GRU_X_val, GRU_y_val), callbacks=[early_stopping])
+
+    # Прогнозирование на тестовых данных
+    GRU_forecast = GRU_model.predict(GRU_X_test)
+
+    # Обратное масштабирование нормализованных данных к исходному масштабу
+    GRU_y_train_inv = scaler.inverse_transform(GRU_y_train.reshape(-1, 1))
+    GRU_y_test_inv = scaler.inverse_transform(GRU_y_test.reshape(-1, 1))
+    GRU_forecast_inv = scaler.inverse_transform(GRU_forecast)
+
+    # Преобразование предсказаний и данных в DataFrame для сохранения временных меток
+    GRU_y_train_inv_df = pd.DataFrame(GRU_y_train_inv, index=train_data.index[:len(GRU_y_train_inv)], columns=['TotalSalesAmount'])
+    GRU_y_test_inv_df = pd.DataFrame(GRU_y_test_inv, index=test_data.index[:len(GRU_y_test_inv)], columns=['TotalSalesAmount'])
+    GRU_forecast_inv_df = pd.DataFrame(GRU_forecast_inv, index=test_data.index[:len(GRU_forecast_inv)], columns=['TotalSalesAmount'])
+
+    # Визуализация результатов прогноза
+    visualize_predictions(train_data, GRU_y_train_inv_df, GRU_y_test_inv_df, GRU_forecast_inv_df, model_name="GRU")
+
+    # Метрики качества
+    GRU_mae = mean_absolute_error(GRU_y_test_inv, GRU_forecast_inv)
+    GRU_mse = mean_squared_error(GRU_y_test_inv, GRU_forecast_inv)
+    GRU_rmse = np.sqrt(GRU_mse)
+
+    print(f"Mean Absolute Error (MAE): {GRU_mae:.3f}")
+    print(f"Mean Squared Error (MSE): {GRU_mse:.3f}")
+    print(f"Root Mean Squared Error (RMSE): {GRU_rmse:.3f}")
+
+    return GRU_model, GRU_forecast_inv_df, GRU_y_test_inv_df, GRU_y_train_inv_df, GRU_mae, GRU_mse, GRU_rmse

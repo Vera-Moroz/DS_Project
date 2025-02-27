@@ -5,7 +5,7 @@ from sklearn.preprocessing import StandardScaler
 
 def calculate_amount(df):
     """
-    Расчитывает столбец 'Amount' как произведение 'Quantity' и 'UnitPrice'.
+    Рассчитывает столбец 'Amount' как произведение 'Quantity' и 'UnitPrice'.
     """
     df['Amount'] = df['Quantity'] * df['UnitPrice']
     return df
@@ -14,7 +14,6 @@ def create_invoice_features(df):
     """
     Создает фичи для каждого чека на основе группировки по InvoiceNo.
     """
-    
     invoice_features = df.groupby('InvoiceNo').agg(
         TotalAmount=('Amount', 'sum'),
         MinUnitPrice=('UnitPrice', 'min'),
@@ -34,7 +33,7 @@ def create_invoice_features(df):
 
 def create_customer_features(df):
     """
-    Создает фичи для каждого абонента на основе группировки по CustomerID.
+    Создает фичи для каждого клиента на основе группировки по CustomerID.
     """
     # Преобразование столбца 'InvoiceDate' в тип datetime
     df['InvoiceDate'] = pd.to_datetime(df['InvoiceDate'])
@@ -94,11 +93,3 @@ def create_date_features(df):
     print("9. 'MonthOfYear': Месяц года.")
 
     return date_features
-
-def normalize_features(df, columns):
-    """
-    Нормализует указанные фичи в DataFrame.
-    """
-    scaler = StandardScaler()
-    df[columns] = scaler.fit_transform(df[columns])
-    return df

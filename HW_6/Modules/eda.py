@@ -28,7 +28,6 @@ def perform_eda(df):
     print(f"Уникальных клиентов: {df['CustomerID'].nunique(dropna=False)}")
     print(f"Уникальных описаний товаров: {df['Description'].nunique(dropna=False)}")
 
-
     # Количество заказов и возвратов
     print("\n**Количество заказов и возвратов:**\n")
     total_invoices = df['InvoiceNo'].nunique()

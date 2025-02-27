@@ -8,6 +8,7 @@ from pmdarima import auto_arima
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
+from tensorflow.keras import models, layers
 from Modules.preprocessing import normalize_data, create_sequences
 from Modules.visualization import visualize_predictions
 
@@ -115,8 +116,7 @@ def lstm_model(train_data, test_data, seq_length=12, epochs=100, batch_size=32):
     warnings.filterwarnings("ignore")
 
     # Нормализация данных
-    scaler = MinMaxScaler()
-    train_data_scaled = scaler.fit_transform(train_data.values.reshape(-1, 1))
+    scaler, train_data_scaled = normalize_data(train_data.values.reshape(-1, 1), feature_range=(-1, 1))
     test_data_scaled = scaler.transform(test_data.values.reshape(-1, 1))
 
     # Создание последовательных данных
@@ -159,3 +159,66 @@ def lstm_model(train_data, test_data, seq_length=12, epochs=100, batch_size=32):
     print(f"Root Mean Squared Error (RMSE): {LSTM_rmse:.3f}")
 
     return LSTM_model, LSTM_forecast_inv_df, LSTM_y_test_inv_df, LSTM_y_train_inv_df, LSTM_mae, LSTM_mse, LSTM_rmse
+
+# CNN Model
+def cnn_model(train_data, test_data, seq_length=12, epochs=20):
+    warnings.filterwarnings("ignore")
+
+    # Нормализация данных
+    scaler, train_data_scaled = normalize_data(train_data.values.reshape(-1, 1), feature_range=(0, 1))
+    test_data_scaled = scaler.transform(test_data.values.reshape(-1, 1))
+
+    # Создание последовательных данных
+    if len(train_data_scaled) > seq_length and len(test_data_scaled) > seq_length:
+        CNN_X_train, CNN_y_train = create_sequences(train_data_scaled, seq_length)
+        CNN_X_test, CNN_y_test = create_sequences(test_data_scaled, seq_length)
+    else:
+        raise ValueError("Ошибка: Размер данных недостаточен для создания последовательностей с указанной длиной.")
+
+    # Преобразование данных в трехмерный формат для CNN
+    CNN_X_train = CNN_X_train.reshape(CNN_X_train.shape[0], CNN_X_train.shape[1], 1)
+    CNN_X_test = CNN_X_test.reshape(CNN_X_test.shape[0], CNN_X_test.shape[1], 1)
+
+    # Создание модели CNN
+    model = models.Sequential([
+        layers.Conv1D(filters=32, kernel_size=3, activation='relu', input_shape=(seq_length, 1)),
+        layers.MaxPooling1D(pool_size=2),
+        layers.Flatten(),
+        layers.Dense(64, activation='relu'),
+        layers.Dense(1)  # 1 выходной нейрон для регрессии
+    ])
+
+    # Компиляция модели
+    model.compile(optimizer='adam', loss='mean_squared_error')
+
+    # Обучение модели
+    history = model.fit(CNN_X_train, CNN_y_train, epochs=epochs, validation_data=(CNN_X_test, CNN_y_test))
+
+    # Прогнозирование на тестовых данных
+    CNN_forecast = model.predict(CNN_X_test)
+
+    # Обратное масштабирование нормализованных данных к исходному масштабу
+    CNN_y_train_inv = scaler.inverse_transform(CNN_y_train.reshape(-1, 1))
+    CNN_y_test_inv = scaler.inverse_transform(CNN_y_test.reshape(-1, 1))
+    CNN_forecast_inv = scaler.inverse_transform(CNN_forecast)
+
+    # Преобразование предсказаний и данных в DataFrame для сохранения временных меток
+    CNN_y_train_inv_df = pd.DataFrame(CNN_y_train_inv, index=train_data.index[:len(CNN_y_train_inv)], columns=['TotalSalesAmount'])
+    CNN_y_test_inv_df = pd.DataFrame(CNN_y_test_inv, index=test_data.index[:len(CNN_y_test_inv)], columns=['TotalSalesAmount'])
+    CNN_forecast_inv_df = pd.DataFrame(CNN_forecast_inv, index=test_data.index[:len(CNN_forecast_inv)], columns=['TotalSalesAmount'])
+
+    # Визуализация результатов прогноза
+    visualize_predictions(train_data, CNN_y_train_inv_df, CNN_y_test_inv_df, CNN_forecast_inv_df, model_name="CNN")
+
+
+    # Метрики качества
+    CNN_mae = mean_absolute_error(CNN_y_test_inv, CNN_forecast_inv)
+    CNN_mse = mean_squared_error(CNN_y_test_inv, CNN_forecast_inv)
+    CNN_rmse = np.sqrt(CNN_mse)
+
+    print(f"Mean Absolute Error (MAE): {CNN_mae:.3f}")
+    print(f"Mean Squared Error (MSE): {CNN_mse:.3f}")
+    print(f"Root Mean Squared Error (RMSE): {CNN_rmse:.3f}")
+
+    return model, CNN_forecast_inv_df, CNN_y_test_inv_df, CNN_y_train_inv_df, CNN_mae, CNN_mse, CNN_rmse
+

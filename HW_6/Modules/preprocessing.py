@@ -186,9 +186,9 @@ def clean_data(df):
 
     return df_clean
 
-def normalize_data(data):
-    scaler = MinMaxScaler()
-    data_scaled = scaler.fit_transform(data.values.reshape(-1, 1))
+def normalize_data(data, feature_range=(0, 1)):
+    scaler = MinMaxScaler(feature_range=feature_range)
+    data_scaled = scaler.fit_transform(data)
     return scaler, data_scaled
 
 # Функция для создания последовательных данных для модели LSTM
